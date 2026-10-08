@@ -1,0 +1,72 @@
+# ==============================================================================
+# Price Monitoring Bot - Site Configuration
+# ==============================================================================
+
+# Alert rules and thresholds
+alerts:
+  min_price_change_cents: 50  # Alert only if price changes by at least $0.50
+
+# Reliability and Health Configuration
+reliability:
+  retries: 3                         # Max retry attempts for transient HTTP failures
+  backoff_seconds: 1.0               # Base backoff seconds for exponential backoff
+  missing_runs_before_delisted: 3    # Consecutive confirmed misses before variant is delisted
+  degraded_failure_percent: 20.0     # Percentage of failed URLs to mark site as degraded
+  suspicious_drop_percent: 50.0      # Drop percentage in observations compared to previous run to mark suspicious
+  stale_after_hours: 36              # Threshold hours after which site data is considered stale
+  heartbeat_hour_utc: 8              # UTC hour at or after which daily heartbeat is dispatched
+
+# List of target stores to monitor
+sites:
+  - name: "Soko Glam Skincare"
+    adapter: "shopify"
+    base_url: "https://sokoglam.com"
+    currency: "USD"
+    delay_seconds: [1.0, 2.0]
+
+  - name: "ColourPop Skincare & Beauty"
+    adapter: "shopify"
+    base_url: "https://colourpop.com"
+    currency: "USD"
+    delay_seconds: [1.0, 2.5]
+
+  - name: "sobi skincare"
+    adapter: "shopify"
+    base_url: "https://sobiskin.com"
+    currency: "USD"
+    delay_seconds: [1.0, 2.5]
+
+  - name: "K-Beauty Store (JSON-LD)"
+    adapter: "jsonld"
+    base_url: "https://sokoglam.com"
+    currency: "USD"
+    delay_seconds: [1.0, 2.5]
+    timeout: 20
+    max_retries: 3
+    targets_path: "config/targets.csv"
+    # Adapter-specific configurable field settings (Rule 9)
+    jsonld_type: "Product"
+    offers_field: "offers"
+    price_field: "price"
+    currency_field: "priceCurrency"
+    availability_field: "availability"
+
+  - name: "Glow Beauty (Playwright)"
+    adapter: "playwright"
+    base_url: "https://sokoglam.com"
+    currency: "USD"
+    delay_seconds: [1.0, 2.5]
+    timeout: 20
+    targets_path: "config/targets.csv"
+    # Selectors configurable per store (Rule 9)
+    price_selector: ".price-item, .price-item--sale, .product-price, .price, [data-price]"
+    compare_price_selector: ".price-item--regular, .compare-price"
+    title_selector: "h1, .product-title, .product__title"
+    availability_selector: "[name='add'], .add-to-cart, button[type='submit']"
+    wait_for: ".price, [data-price], h1"
+
+  - name: "yanybeuty"
+    adapter: "shopify"
+    base_url: "https://yanybeauty.co/products/mango-breeze-refreshing-eye-serum"
+    currency: "USD"
+    delay_seconds: [1.0, 2.0]

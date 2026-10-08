@@ -1,0 +1,423 @@
+{
+  "communities": {
+    "0": [
+      "monitor_models_observation",
+      "monitor_models_rationale_10",
+      "monitor_runner_rationale_72",
+      "monitor_runner_run_once",
+      "monitor_storage",
+      "monitor_storage_get_connection",
+      "monitor_storage_get_last_check",
+      "monitor_storage_get_unnotified_events",
+      "monitor_storage_get_variant_ids_for_site",
+      "monitor_storage_init_db",
+      "monitor_storage_insert_event",
+      "monitor_storage_insert_price_check",
+      "monitor_storage_is_price_checks_empty",
+      "monitor_storage_mark_events_notified",
+      "monitor_storage_py_any",
+      "monitor_storage_py_connection",
+      "monitor_storage_rationale_1",
+      "monitor_storage_rationale_137",
+      "monitor_storage_rationale_153",
+      "monitor_storage_rationale_168",
+      "monitor_storage_rationale_17",
+      "monitor_storage_rationale_237",
+      "monitor_storage_rationale_272",
+      "monitor_storage_rationale_308",
+      "monitor_storage_rationale_346",
+      "monitor_storage_rationale_381",
+      "monitor_storage_rationale_40",
+      "monitor_storage_upsert_variant",
+      "sqlite3",
+      "tests_test_notifier_py_path",
+      "tests_test_notifier_rationale_177",
+      "tests_test_notifier_rationale_244",
+      "tests_test_notifier_test_dry_run_does_not_send_or_mark_notified",
+      "tests_test_notifier_test_runner_marks_notified_only_on_success",
+      "tests_test_runner_rationale_73",
+      "tests_test_runner_test_run_once_second_run_detects_price_drop",
+      "tests_test_storage",
+      "tests_test_storage_memory_db",
+      "tests_test_storage_py_connection",
+      "tests_test_storage_py_fixture",
+      "tests_test_storage_rationale_1",
+      "tests_test_storage_rationale_122",
+      "tests_test_storage_rationale_22",
+      "tests_test_storage_rationale_30",
+      "tests_test_storage_rationale_96",
+      "tests_test_storage_test_insert_event_and_get_unnotified",
+      "tests_test_storage_test_is_price_checks_empty_and_get_variant_ids",
+      "tests_test_storage_test_upsert_variant_and_insert_price_check"
+    ],
+    "1": [
+      "abc",
+      "dataclasses",
+      "exception",
+      "monitor_adapters_base",
+      "monitor_adapters_base_rationale_1",
+      "monitor_adapters_base_rationale_35",
+      "monitor_adapters_base_rationale_9",
+      "monitor_adapters_base_siteadapter",
+      "monitor_adapters_base_siteadapter_fetch",
+      "monitor_adapters_init",
+      "monitor_adapters_init_rationale_1",
+      "monitor_adapters_shopify",
+      "monitor_adapters_shopify_py_any",
+      "monitor_adapters_shopify_rationale_1",
+      "monitor_adapters_shopify_rationale_20",
+      "monitor_adapters_shopify_rationale_27",
+      "monitor_adapters_shopify_rationale_96",
+      "monitor_adapters_shopify_shopifyadapter",
+      "monitor_adapters_shopify_shopifyadapter_fetch",
+      "monitor_adapters_shopify_shopifyadapter_parse_products_data",
+      "monitor_detector",
+      "monitor_detector_rationale_1",
+      "monitor_models",
+      "monitor_models_fetchresult",
+      "monitor_models_rationale_1",
+      "monitor_models_rationale_41",
+      "monitor_runner",
+      "monitor_runner_rationale_1",
+      "monitor_utils_http",
+      "monitor_utils_http_http_get",
+      "monitor_utils_http_httperror",
+      "monitor_utils_http_httperror_init",
+      "monitor_utils_http_py_any",
+      "monitor_utils_http_rationale_1",
+      "monitor_utils_http_rationale_19",
+      "monitor_utils_http_rationale_34",
+      "random",
+      "requests",
+      "response",
+      "typing"
+    ],
+    "2": [
+      "datetime",
+      "html",
+      "monitor_notifier",
+      "monitor_notifier_build_message",
+      "monitor_notifier_escape_html",
+      "monitor_notifier_format_event_block",
+      "monitor_notifier_format_price_change",
+      "monitor_notifier_py_any",
+      "monitor_notifier_rationale_1",
+      "monitor_notifier_rationale_186",
+      "monitor_notifier_rationale_20",
+      "monitor_notifier_rationale_27",
+      "monitor_notifier_rationale_44",
+      "monitor_notifier_rationale_91",
+      "monitor_notifier_send_message",
+      "tests_test_notifier",
+      "tests_test_notifier_py_patch",
+      "tests_test_notifier_rationale_1",
+      "tests_test_notifier_rationale_121",
+      "tests_test_notifier_rationale_149",
+      "tests_test_notifier_rationale_162",
+      "tests_test_notifier_rationale_21",
+      "tests_test_notifier_rationale_29",
+      "tests_test_notifier_rationale_47",
+      "tests_test_notifier_test_build_message_grouping",
+      "tests_test_notifier_test_build_message_splitting_at_boundaries",
+      "tests_test_notifier_test_escape_html",
+      "tests_test_notifier_test_format_price_change",
+      "tests_test_notifier_test_send_message_failure_and_retries",
+      "tests_test_notifier_test_send_message_success",
+      "time"
+    ],
+    "3": [
+      "decimal",
+      "monitor_utils_money",
+      "monitor_utils_money_cents_to_str",
+      "monitor_utils_money_rationale_1",
+      "monitor_utils_money_rationale_49",
+      "monitor_utils_money_rationale_8",
+      "monitor_utils_money_to_cents",
+      "tests_test_money",
+      "tests_test_money_rationale_1",
+      "tests_test_money_rationale_17",
+      "tests_test_money_rationale_23",
+      "tests_test_money_rationale_30",
+      "tests_test_money_rationale_36",
+      "tests_test_money_rationale_43",
+      "tests_test_money_rationale_50",
+      "tests_test_money_rationale_57",
+      "tests_test_money_rationale_9",
+      "tests_test_money_test_cents_to_str",
+      "tests_test_money_test_to_cents_currency_and_separators",
+      "tests_test_money_test_to_cents_integers_and_floats",
+      "tests_test_money_test_to_cents_invalid_string",
+      "tests_test_money_test_to_cents_none_and_empty",
+      "tests_test_money_test_to_cents_single_decimal",
+      "tests_test_money_test_to_cents_standard_string",
+      "tests_test_money_test_to_cents_zero"
+    ],
+    "4": [
+      "monitor_detector_detect",
+      "monitor_detector_py_any",
+      "monitor_detector_rationale_12",
+      "tests_test_detector",
+      "tests_test_detector_make_obs",
+      "tests_test_detector_rationale_1",
+      "tests_test_detector_rationale_105",
+      "tests_test_detector_rationale_118",
+      "tests_test_detector_rationale_139",
+      "tests_test_detector_rationale_18",
+      "tests_test_detector_rationale_35",
+      "tests_test_detector_rationale_48",
+      "tests_test_detector_rationale_56",
+      "tests_test_detector_rationale_69",
+      "tests_test_detector_rationale_82",
+      "tests_test_detector_rationale_92",
+      "tests_test_detector_test_detect_back_in_stock",
+      "tests_test_detector_test_detect_change_smaller_than_threshold_ignored",
+      "tests_test_detector_test_detect_new_variant",
+      "tests_test_detector_test_detect_out_of_stock",
+      "tests_test_detector_test_detect_previous_none_explicit",
+      "tests_test_detector_test_detect_price_and_stock_change_together",
+      "tests_test_detector_test_detect_price_drop",
+      "tests_test_detector_test_detect_price_increase",
+      "tests_test_detector_test_detect_price_none"
+    ],
+    "5": [
+      "monitor_init",
+      "monitor_init_rationale_1",
+      "monitor_runner_create_adapter",
+      "monitor_runner_load_config",
+      "monitor_runner_print_summary",
+      "monitor_runner_py_any",
+      "monitor_runner_rationale_23",
+      "monitor_runner_rationale_272",
+      "monitor_runner_rationale_46",
+      "pytest",
+      "tests_test_runner",
+      "tests_test_runner_py_patch",
+      "tests_test_runner_py_path",
+      "tests_test_runner_rationale_1",
+      "tests_test_runner_rationale_139",
+      "tests_test_runner_rationale_14",
+      "tests_test_runner_rationale_24",
+      "tests_test_runner_rationale_36",
+      "tests_test_runner_test_create_adapter",
+      "tests_test_runner_test_load_config",
+      "tests_test_runner_test_run_once_baseline_creates_no_events",
+      "tests_test_runner_test_run_once_handles_failing_site",
+      "unittest_mock",
+      "yaml"
+    ],
+    "6": [
+      "json",
+      "pathlib",
+      "tests_test_shopify_adapter",
+      "tests_test_shopify_adapter_adapter",
+      "tests_test_shopify_adapter_py_fixture",
+      "tests_test_shopify_adapter_rationale_1",
+      "tests_test_shopify_adapter_rationale_13",
+      "tests_test_shopify_adapter_rationale_21",
+      "tests_test_shopify_adapter_rationale_33",
+      "tests_test_shopify_adapter_rationale_46",
+      "tests_test_shopify_adapter_rationale_59",
+      "tests_test_shopify_adapter_rationale_76",
+      "tests_test_shopify_adapter_rationale_87",
+      "tests_test_shopify_adapter_rationale_97",
+      "tests_test_shopify_adapter_sample_payload",
+      "tests_test_shopify_adapter_test_availability_extracted_correctly",
+      "tests_test_shopify_adapter_test_empty_payload_handled_gracefully",
+      "tests_test_shopify_adapter_test_fixture_parsing_total_variants",
+      "tests_test_shopify_adapter_test_missing_price_is_none_never_zero",
+      "tests_test_shopify_adapter_test_prices_extracted_correctly",
+      "tests_test_shopify_adapter_test_variant_ids_and_titles"
+    ],
+    "7": [
+      "argparse",
+      "dotenv",
+      "logger",
+      "logging",
+      "logging_handlers",
+      "monitor_main",
+      "monitor_main_main",
+      "monitor_main_parse_args",
+      "monitor_main_rationale_1",
+      "monitor_main_rationale_25",
+      "monitor_main_rationale_64",
+      "monitor_utils_logging_setup",
+      "monitor_utils_logging_setup_rationale_1",
+      "monitor_utils_logging_setup_rationale_14",
+      "monitor_utils_logging_setup_setup_logging",
+      "namespace",
+      "os",
+      "sys"
+    ],
+    "8": [
+      "monitor_adapters_base_py_any",
+      "monitor_adapters_base_rationale_16",
+      "monitor_adapters_base_siteadapter_init"
+    ],
+    "9": [
+      "monitor_utils_init",
+      "monitor_utils_init_rationale_1"
+    ],
+    "10": [
+      "tests_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.09397163120567376,
+    "1": 0.08846153846153847,
+    "2": 0.1053763440860215,
+    "3": 0.12,
+    "4": 0.14,
+    "5": 0.10507246376811594,
+    "6": 0.10476190476190476,
+    "7": 0.1568627450980392,
+    "8": 0.6666666666666666,
+    "9": 1.0,
+    "10": 1.0
+  },
+  "gods": [
+    {
+      "id": "monitor_runner_run_once",
+      "label": "run_once()",
+      "degree": 29
+    },
+    {
+      "id": "monitor_models_observation",
+      "label": "Observation",
+      "degree": 21
+    },
+    {
+      "id": "monitor_adapters_shopify_shopifyadapter",
+      "label": "ShopifyAdapter",
+      "degree": 18
+    },
+    {
+      "id": "monitor_detector_detect",
+      "label": "detect()",
+      "degree": 16
+    },
+    {
+      "id": "monitor_models_fetchresult",
+      "label": "FetchResult",
+      "degree": 16
+    },
+    {
+      "id": "monitor_utils_money_to_cents",
+      "label": "to_cents()",
+      "degree": 13
+    },
+    {
+      "id": "tests_test_detector_make_obs",
+      "label": "make_obs()",
+      "degree": 12
+    },
+    {
+      "id": "monitor_adapters_base_siteadapter",
+      "label": "SiteAdapter",
+      "degree": 11
+    },
+    {
+      "id": "monitor_notifier_send_message",
+      "label": "send_message()",
+      "degree": 10
+    },
+    {
+      "id": "monitor_storage_get_connection",
+      "label": "get_connection()",
+      "degree": 10
+    }
+  ],
+  "surprises": [
+    {
+      "source": "adapter()",
+      "target": "ShopifyAdapter",
+      "source_files": [
+        "tests/test_shopify_adapter.py",
+        "monitor/adapters/shopify.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_availability_extracted_correctly()",
+      "target": "ShopifyAdapter",
+      "source_files": [
+        "tests/test_shopify_adapter.py",
+        "monitor/adapters/shopify.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_empty_payload_handled_gracefully()",
+      "target": "ShopifyAdapter",
+      "source_files": [
+        "tests/test_shopify_adapter.py",
+        "monitor/adapters/shopify.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_fixture_parsing_total_variants()",
+      "target": "ShopifyAdapter",
+      "source_files": [
+        "tests/test_shopify_adapter.py",
+        "monitor/adapters/shopify.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_missing_price_is_none_never_zero()",
+      "target": "ShopifyAdapter",
+      "source_files": [
+        "tests/test_shopify_adapter.py",
+        "monitor/adapters/shopify.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `run_once()` connect `Community 0` to `Community 1`, `Community 2`, `Community 4`, `Community 5`, `Community 7`?",
+      "why": "High betweenness centrality (0.162) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 8 inferred relationships involving `Observation` (e.g. with `ShopifyAdapter` and `detect()`) actually correct?",
+      "why": "`Observation` has 8 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09397163120567376 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Observation` connect `Community 0` to `Community 1`, `Community 2`, `Community 4`, `Community 5`?",
+      "why": "High betweenness centrality (0.134) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 10 inferred relationships involving `ShopifyAdapter` (e.g. with `FetchResult` and `Observation`) actually correct?",
+      "why": "`ShopifyAdapter` has 10 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08846153846153847 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `ShopifyAdapter` connect `Community 1` to `Community 0`, `Community 5`, `Community 6`?",
+      "why": "High betweenness centrality (0.117) - this node is a cross-community bridge."
+    }
+  ]
+}

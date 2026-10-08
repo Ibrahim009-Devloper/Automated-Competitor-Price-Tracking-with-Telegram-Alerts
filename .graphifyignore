@@ -1,0 +1,11 @@
+# Ignore external MCP server repository
+codebase-memory-mcp/
+
+# Ignore SQLite databases and log outputs
+*.db
+*.sqlite
+logs/
+
+# Ignore Python caches
+__pycache__/
+.pytest_cache/

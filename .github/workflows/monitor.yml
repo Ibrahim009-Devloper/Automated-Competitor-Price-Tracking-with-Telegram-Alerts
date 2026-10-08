@@ -1,0 +1,170 @@
+name: Price Monitor
+
+# Trigger schedules:
+# 1. schedule (cron, UTC): Runs 4 times a day at minute 17 of hours 02, 08, 14, and 20 UTC.
+#    - Note on Timezones: GitHub cron expressions operate strictly in UTC.
+#    - Dhaka time (Bangladesh Standard Time, BST) is UTC+6:
+#        * 02:17 UTC = 08:17 AM Dhaka (BST)
+#        * 08:17 UTC = 02:17 PM Dhaka (BST)
+#        * 14:17 UTC = 08:17 PM Dhaka (BST)
+#        * 20:17 UTC = 02:17 AM Dhaka (BST, next day)
+#    - Note on Delays: GitHub Actions scheduled cron runs can be delayed during peak platform loads.
+# 2. workflow_dispatch: Enables manual runs directly from the GitHub Actions web interface.
+on:
+  schedule:
+    - cron: "17 2,8,14,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "price-monitor"
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Run Monitor
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Fail fast if DATABASE_URL is missing
+        id: check-db-secret
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL is required in CI (SQLite does not persist in Actions)"
+            exit 1
+          fi
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        id: install-deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Determine Playwright version
+        id: playwright-version
+        run: |
+          PW_VER=$(python -c 'import importlib.metadata; print(importlib.metadata.version("playwright"))')
+          echo "version=${PW_VER}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browser
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright and dependencies
+        id: install-playwright
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            echo "Playwright cache hit. Installing OS system dependencies only..."
+            playwright install-deps chromium
+          else
+            echo "Playwright cache miss. Installing Chromium and OS system dependencies..."
+            playwright install --with-deps chromium
+          fi
+
+      - name: Run CI pre-flight checks (--ci-check)
+        id: ci-check
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          CI: "true"
+        run: |
+          python -m monitor.main --ci-check
+
+      - name: Run price monitor
+        id: run-monitor
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          CI: "true"
+        run: |
+          python -m monitor.main
+
+      - name: Notify admin of CI failure
+        id: notify-admin-failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          STATUS_CHECK_DB: ${{ steps.check-db-secret.outcome }}
+          STATUS_SETUP_PY: ${{ steps.setup-python.outcome }}
+          STATUS_INSTALL_DEPS: ${{ steps.install-deps.outcome }}
+          STATUS_INSTALL_PW: ${{ steps.install-playwright.outcome }}
+          STATUS_CI_CHECK: ${{ steps.ci-check.outcome }}
+          STATUS_RUN_MONITOR: ${{ steps.run-monitor.outcome }}
+        run: |
+          python -c "
+          import os, requests
+
+          token = os.environ.get('TELEGRAM_BOT_TOKEN')
+          admin_id = os.environ.get('TELEGRAM_ADMIN_CHAT_ID')
+          run_url = os.environ.get('RUN_URL')
+          wf = os.environ.get('WORKFLOW_NAME')
+
+          steps_map = [
+              ('STATUS_CHECK_DB', 'Fail fast if DATABASE_URL is missing'),
+              ('STATUS_SETUP_PY', 'Set up Python'),
+              ('STATUS_INSTALL_DEPS', 'Install dependencies'),
+              ('STATUS_INSTALL_PW', 'Install Playwright and dependencies'),
+              ('STATUS_CI_CHECK', 'Run CI pre-flight checks (--ci-check)'),
+              ('STATUS_RUN_MONITOR', 'Run price monitor'),
+          ]
+
+          failed_step_name = 'Unknown step'
+          for env_key, step_title in steps_map:
+              if os.environ.get(env_key) == 'failure':
+                  failed_step_name = step_title
+                  break
+
+          if token and admin_id:
+              text = (
+                  f'🚨 <b>GitHub Actions Workflow Failure</b>\n'
+                  f'<b>Workflow:</b> {wf}\n'
+                  f'<b>Failed Step:</b> {failed_step_name}\n'
+                  f'<b>Run URL:</b> <a href=\"{run_url}\">View Run Logs</a>'
+              )
+              try:
+                  requests.post(
+                      f'https://api.telegram.org/bot{token}/sendMessage',
+                      json={'chat_id': admin_id, 'text': text, 'parse_mode': 'HTML'},
+                      timeout=10,
+                  )
+              except Exception as err:
+                  print(f'Failed to deliver admin Telegram alert: {err}')
+          "
+
+      - name: Upload logs and debug artifacts on failure
+        id: upload-logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitor-logs-and-debug
+          path: |
+            logs/
+            debug/
+          retention-days: 7
+          if-no-files-found: ignore

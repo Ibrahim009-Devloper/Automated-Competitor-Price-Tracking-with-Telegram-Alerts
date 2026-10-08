@@ -1,0 +1,23 @@
+{
+  "0": "Observation",
+  "1": "test_playwright_validation_and_fixes.py",
+  "2": "FetchResult",
+  "3": "test_money.py",
+  "4": "detect",
+  "5": "test_playwright_adapter.py",
+  "6": "Quickstart Guide",
+  "7": ".parse_html",
+  "8": "ShopifyAdapter",
+  "9": "utils/__init__.py",
+  "10": "tests/__init__.py",
+  "11": "main.py",
+  "12": "runner.py",
+  "13": "JsonLdAdapter",
+  "14": ".__init__",
+  "15": "test_runner.py",
+  "16": "fallback.py",
+  "18": "test_fallback_strategy.py",
+  "20": "._extract_page",
+  "27": "sample_config",
+  "31": ".__init__"
+}

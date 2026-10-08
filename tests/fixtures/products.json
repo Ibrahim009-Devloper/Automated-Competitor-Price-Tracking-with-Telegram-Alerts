@@ -1,0 +1,75 @@
+{
+  "products": [
+    {
+      "id": 8316758818885,
+      "title": "Dermalogy Double Vita Spot Toning Serum (RC)",
+      "handle": "dermalogy-double-vita-spot-toning-serum-rc",
+      "body_html": "<p>Brightening serum for dark spots.</p>",
+      "published_at": "2026-10-06T11:30:07-04:00",
+      "created_at": "2026-10-05T11:57:12-04:00",
+      "updated_at": "2026-10-07T00:13:14-04:00",
+      "vendor": "NEOGEN",
+      "product_type": "Serum",
+      "variants": [
+        {
+          "id": 45934865580101,
+          "title": "30ml / 1.01 fl oz",
+          "price": "34.00",
+          "compare_at_price": "42.00",
+          "available": true,
+          "product_id": 8316758818885
+        },
+        {
+          "id": 45934865580102,
+          "title": "50ml Jumbo",
+          "price": "52.50",
+          "compare_at_price": null,
+          "available": false,
+          "product_id": 8316758818885
+        }
+      ]
+    },
+    {
+      "id": 7192837465012,
+      "title": "Calming Centella Sun Cream SPF50+",
+      "handle": "calming-centella-sun-cream-spf50",
+      "body_html": "<p>Lightweight daily physical sunscreen.</p>",
+      "published_at": "2026-08-15T09:00:00-04:00",
+      "created_at": "2026-08-10T14:20:00-04:00",
+      "updated_at": "2026-10-06T18:00:00-04:00",
+      "vendor": "SKIN1004",
+      "product_type": "Sun Care",
+      "variants": [
+        {
+          "id": 41827364510928,
+          "title": "Default Title",
+          "price": "18.00",
+          "compare_at_price": "22.50",
+          "available": true,
+          "product_id": 7192837465012
+        }
+      ]
+    },
+    {
+      "id": 6543210987654,
+      "title": "Sample Sachet Trial Pack",
+      "handle": "sample-sachet-trial-pack",
+      "body_html": "<p>Complimentary sample pack.</p>",
+      "published_at": "2026-05-01T10:00:00-04:00",
+      "created_at": "2026-05-01T10:00:00-04:00",
+      "updated_at": "2026-10-01T12:00:00-04:00",
+      "vendor": "SampleBrand",
+      "product_type": "Samples",
+      "variants": [
+        {
+          "id": 39827162534120,
+          "title": "Free Sample",
+          "price": null,
+          "compare_at_price": null,
+          "available": true,
+          "product_id": 6543210987654
+        }
+      ]
+    }
+  ]
+}
