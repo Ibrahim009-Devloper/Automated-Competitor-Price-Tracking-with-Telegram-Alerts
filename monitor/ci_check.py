@@ -65,21 +65,41 @@ def run_ci_check(
     # -------------------------------------------------------------
     # 2. Environment Variable Verification (names only, never values)
     # -------------------------------------------------------------
-    required_vars = [
-        "DATABASE_URL",
-        "TELEGRAM_BOT_TOKEN",
-        "TELEGRAM_CHAT_ID",
-        "TELEGRAM_ADMIN_CHAT_ID",
-    ]
     print("\n[2/4] Checking Required Environment Variables...")
     missing_vars = []
-    for var_name in required_vars:
+
+    # Mandatory credentials from .env
+    for var_name in ("DATABASE_URL", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
         val = os.getenv(var_name)
         if val and val.strip():
             print(f"  • {var_name:<25}: PRESENT")
         else:
             print(f"  • {var_name:<25}: MISSING or empty", file=sys.stderr)
             missing_vars.append(var_name)
+
+    # Admin / Error chat credentials (accepts either TELEGRAM_ERROR_CHAT_ID or TELEGRAM_ADMIN_CHAT_ID)
+    error_chat = os.getenv("TELEGRAM_ERROR_CHAT_ID") or os.getenv("TELEGRAM_ADMIN_CHAT_ID")
+    if error_chat and error_chat.strip():
+        name_used = "TELEGRAM_ERROR_CHAT_ID" if os.getenv("TELEGRAM_ERROR_CHAT_ID") else "TELEGRAM_ADMIN_CHAT_ID"
+        print(f"  • {name_used:<25}: PRESENT")
+    else:
+        print("  • TELEGRAM_ERROR_CHAT_ID / TELEGRAM_ADMIN_CHAT_ID: MISSING or empty", file=sys.stderr)
+        missing_vars.append("TELEGRAM_ERROR_CHAT_ID (or TELEGRAM_ADMIN_CHAT_ID)")
+
+    # Optional / Informational variables from .env
+    optional_env_vars = [
+        "TELEGRAM_ERROR_BOT_TOKEN",
+        "SUPABASE_URL",
+        "SUPABASE_PUBLISHABLE_KEY",
+        "SUPABASE_SECRET_KEY",
+        "SUPABASE_JWKS_URL",
+        "DATABASE_PATH",
+        "CONFIG_PATH",
+        "LOG_LEVEL",
+    ]
+    for opt_name in optional_env_vars:
+        if os.getenv(opt_name):
+            print(f"  • {opt_name:<25}: PRESENT (optional)")
 
     if missing_vars:
         print(f"\n❌ Pre-flight check failed: Missing secrets: {', '.join(missing_vars)}\n", file=sys.stderr)

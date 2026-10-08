@@ -28,6 +28,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
 
+    # Environment variables mapped from repository secrets matching .env names
+    env:
+      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+      CONFIG_PATH: ${{ secrets.CONFIG_PATH }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_ERROR_BOT_TOKEN: ${{ secrets.TELEGRAM_ERROR_BOT_TOKEN }}
+      TELEGRAM_ERROR_CHAT_ID: ${{ secrets.TELEGRAM_ERROR_CHAT_ID }}
+      TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      SUPABASE_JWKS_URL: ${{ secrets.SUPABASE_JWKS_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Checkout repository
         id: checkout
@@ -88,10 +104,19 @@ jobs:
       - name: Run CI pre-flight checks (--ci-check)
         id: ci-check
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          CONFIG_PATH: ${{ secrets.CONFIG_PATH }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_ERROR_BOT_TOKEN: ${{ secrets.TELEGRAM_ERROR_BOT_TOKEN }}
+          TELEGRAM_ERROR_CHAT_ID: ${{ secrets.TELEGRAM_ERROR_CHAT_ID }}
           TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_JWKS_URL: ${{ secrets.SUPABASE_JWKS_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CI: "true"
         run: |
           python -m monitor.main --ci-check
@@ -106,10 +131,19 @@ jobs:
       - name: Run price monitor
         id: run-monitor
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          CONFIG_PATH: ${{ secrets.CONFIG_PATH }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_ERROR_BOT_TOKEN: ${{ secrets.TELEGRAM_ERROR_BOT_TOKEN }}
+          TELEGRAM_ERROR_CHAT_ID: ${{ secrets.TELEGRAM_ERROR_CHAT_ID }}
           TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_JWKS_URL: ${{ secrets.SUPABASE_JWKS_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CI: "true"
         run: |
           python -m monitor.main
@@ -119,6 +153,9 @@ jobs:
         if: failure()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ERROR_BOT_TOKEN: ${{ secrets.TELEGRAM_ERROR_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_ERROR_CHAT_ID: ${{ secrets.TELEGRAM_ERROR_CHAT_ID }}
           TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           WORKFLOW_NAME: ${{ github.workflow }}
@@ -134,8 +171,8 @@ jobs:
           python -c "
           import os, requests
 
-          token = os.environ.get('TELEGRAM_BOT_TOKEN')
-          admin_id = os.environ.get('TELEGRAM_ADMIN_CHAT_ID')
+          token = os.environ.get('TELEGRAM_ERROR_BOT_TOKEN') or os.environ.get('TELEGRAM_BOT_TOKEN')
+          admin_id = os.environ.get('TELEGRAM_ERROR_CHAT_ID') or os.environ.get('TELEGRAM_ADMIN_CHAT_ID') or os.environ.get('TELEGRAM_CHAT_ID')
           run_url = os.environ.get('RUN_URL')
           wf = os.environ.get('WORKFLOW_NAME')
 
