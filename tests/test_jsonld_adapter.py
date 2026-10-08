@@ -36,7 +36,7 @@ def sample_config():
 @pytest.fixture
 def sample_html_fixture():
     """Read the real HTML fixture saved from Soko Glam product page."""
-    fixture_path = Path("tests/fixtures/sample_jsonld_product.html")
+    fixture_path = Path(__file__).parent / "fixtures" / "sample_jsonld_product.html"
     assert fixture_path.exists(), "Sample HTML fixture must exist"
     return fixture_path.read_text(encoding="utf-8")
 

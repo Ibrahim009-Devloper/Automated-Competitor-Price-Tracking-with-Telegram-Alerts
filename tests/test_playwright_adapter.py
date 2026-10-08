@@ -34,7 +34,7 @@ def sample_config():
 @pytest.fixture
 def sample_html_fixture():
     """Read the sample Playwright HTML fixture."""
-    fixture_path = Path("tests/fixtures/sample_playwright_product.html")
+    fixture_path = Path(__file__).parent / "fixtures" / "sample_playwright_product.html"
     assert fixture_path.exists(), "Sample Playwright fixture must exist"
     return fixture_path.read_text(encoding="utf-8")
 

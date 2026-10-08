@@ -704,6 +704,7 @@ alerts:
   min_price_change_cents: 0
 reliability:
   retries: 1
+  heartbeat_hour_utc: 23
 sites:
   - name: "Store A"
     adapter: "shopify"

@@ -1,7 +1,7 @@
 # Graph Report - Shopify_skin_care_price_monitoring_bot  (2026-10-08)
 
 ## Corpus Check
-- 37 files · ~64,277 words
+- 37 files · ~64,503 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .csv 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `cf54fd75`
+- Built from commit: `fa1dfde1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

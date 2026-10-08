@@ -70,7 +70,7 @@ def test_real_soko_glam_fixture_title_and_price(playwright_config):
     - Price must NOT be N/A; it must be 3400 cents ($34.00).
     """
     adapter = PlaywrightAdapter(playwright_config)
-    fixture_path = Path("tests/fixtures/sample_jsonld_product.html")
+    fixture_path = Path(__file__).parent / "fixtures" / "sample_jsonld_product.html"
     assert fixture_path.exists()
     html_text = fixture_path.read_text(encoding="utf-8")
 

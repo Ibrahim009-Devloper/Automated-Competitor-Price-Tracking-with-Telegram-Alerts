@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 import yaml
 
 from monitor.adapters import create_adapter as _create_adapter
@@ -31,25 +31,70 @@ from monitor.validator import validate
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CONFIG_PATH = os.getenv("CONFIG_PATH", "config/sites.yaml")
+# Project root directory: two levels up from monitor/runner.py
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Default configuration path: absolute path based on the project root.
+# If CONFIG_PATH environment variable is specified, use it (treating empty/whitespace as not set).
+# If it is a relative path (e.g. 'config/sites.yaml'), resolve it relative to PROJECT_ROOT.
+_env_config = os.getenv("CONFIG_PATH", "").strip()
+if _env_config:
+    _p = Path(_env_config)
+    DEFAULT_CONFIG_PATH: Path = (_p if _p.is_absolute() else (PROJECT_ROOT / _p)).resolve()
+else:
+    DEFAULT_CONFIG_PATH: Path = (PROJECT_ROOT / "config" / "sites.yaml").resolve()
 
 
-def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
+def load_config(config_path: Optional[Union[str, Path]] = None) -> Dict[str, Any]:
     """Load and parse sites and alerts configuration from YAML file.
 
     Args:
-        config_path: Path to the YAML configuration file.
+        config_path: Path to the YAML configuration file. If None or empty,
+            falls back to CONFIG_PATH env var or DEFAULT_CONFIG_PATH.
 
     Returns:
         Dict[str, Any]: Parsed configuration dictionary.
 
     Raises:
-        FileNotFoundError: If configuration file does not exist.
+        FileNotFoundError: If configuration file is missing or is a directory.
         yaml.YAMLError: If YAML content cannot be parsed.
     """
-    path = Path(config_path or DEFAULT_CONFIG_PATH)
-    if not path.exists():
-        raise FileNotFoundError(f"Configuration file not found: {path.resolve()}")
+    # If config_path is provided as a string, strip whitespace and treat empty as None
+    if isinstance(config_path, str):
+        clean_path = config_path.strip()
+        config_path = clean_path if clean_path else None
+
+    # Resolve target path: explicit argument -> environment variable -> default absolute path
+    if config_path:
+        p = Path(config_path)
+        # If relative path does not exist in current directory, check relative to PROJECT_ROOT
+        if not p.is_file() and not p.is_absolute():
+            candidate = (PROJECT_ROOT / p).resolve()
+            if candidate.is_file():
+                path = candidate
+            else:
+                path = p
+        else:
+            path = p
+    else:
+        env_val = os.getenv("CONFIG_PATH", "").strip()
+        if env_val:
+            p = Path(env_val)
+            path = (p if p.is_absolute() else (PROJECT_ROOT / p)).resolve()
+        else:
+            path = DEFAULT_CONFIG_PATH
+
+    abs_path = path.resolve()
+
+    # Use is_file() to ensure it exists and is a regular file, not a directory
+    if not path.is_file():
+        if path.is_dir():
+            raise FileNotFoundError(
+                f"Configuration path is a directory, not a file: {abs_path}"
+            )
+        raise FileNotFoundError(
+            f"Configuration file not found (path is missing): {abs_path}"
+        )
 
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
@@ -129,6 +174,12 @@ def run_once(
     Returns:
         Dict[str, Any]: Run statistics dictionary including detected events.
     """
+    # CI Guard: Never silently fall back to SQLite when running in CI.
+    # Must run first before loading config, opening browsers, or touching storage.
+    is_ci = os.getenv("CI", "").strip().lower() in ("true", "1", "yes") or bool(os.getenv("GITHUB_ACTIONS"))
+    if is_ci and not os.getenv("DATABASE_URL") and not db_path:
+        raise RuntimeError("DATABASE_URL is required in CI (SQLite does not persist in Actions)")
+
     config = load_config(config_path)
     sites: List[Dict[str, Any]] = config.get("sites", [])
 
@@ -169,11 +220,6 @@ def run_once(
         ]
         if not sites:
             logger.warning("No sites matched filter '%s'. Exiting run.", site_filter)
-
-    # CI Guard: Never silently fall back to SQLite when running in CI
-    is_ci = os.getenv("CI", "").strip().lower() in ("true", "1", "yes") or bool(os.getenv("GITHUB_ACTIONS"))
-    if is_ci and not os.getenv("DATABASE_URL") and not db_path:
-        raise RuntimeError("DATABASE_URL is required in CI (SQLite does not persist in Actions)")
 
     # Initialize database backend (Postgres if DATABASE_URL set, else SQLite)
     try:
@@ -582,13 +628,17 @@ def run_once(
             else:
                 try:
                     price_sent_ok = True
-                    for msg in notification_messages:
+                    for idx, msg in enumerate(notification_messages):
+                        if idx > 0:
+                            time.sleep(1.0)  # Respect Telegram 1 msg/sec rate limit
                         if not send_message(msg):
                             price_sent_ok = False
                             break
 
                     summary_sent_ok = True
                     if new_variants_summary_msg:
+                        if notification_messages:
+                            time.sleep(1.0)
                         summary_sent_ok = send_message(new_variants_summary_msg)
 
                     prev_team_delivery = storage.get_meta(conn, "team_delivery_status") or "ok"

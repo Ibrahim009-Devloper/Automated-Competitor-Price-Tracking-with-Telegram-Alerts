@@ -12,7 +12,7 @@ import yaml
 
 from monitor.ci_check import run_ci_check
 from monitor.models import FetchResult, Observation
-from monitor.runner import run_once
+from monitor.runner import DEFAULT_CONFIG_PATH, load_config, run_once
 from monitor import storage
 from monitor.utils.logging_setup import SecretMaskingFilter, setup_logging
 
@@ -32,6 +32,66 @@ def test_ci_guard_raises_error_when_database_url_missing(monkeypatch):
 
     with pytest.raises(RuntimeError, match="DATABASE_URL is required in CI"):
         run_once(db_path=None)
+
+
+def test_ci_guard_raises_error_even_when_config_path_invalid_or_missing(monkeypatch, tmp_path: Path):
+    """Verify that CI guard fails fast even if config_path is invalid, missing, or a directory."""
+    monkeypatch.setenv("CI", "true")
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+
+    # 1. Missing config file
+    with pytest.raises(RuntimeError, match="DATABASE_URL is required in CI"):
+        run_once(config_path=str(tmp_path / "missing_file.yaml"), db_path=None)
+
+    # 2. Directory instead of file
+    with pytest.raises(RuntimeError, match="DATABASE_URL is required in CI"):
+        run_once(config_path=str(tmp_path), db_path=None)
+
+
+def test_load_config_raises_clear_error_for_missing_file_and_directory(tmp_path: Path):
+    """Verify that load_config raises FileNotFoundError specifying if path is missing or is a directory."""
+    # 1. Missing file: must state that path is missing and include absolute path
+    missing_path = tmp_path / "nonexistent_config.yaml"
+    with pytest.raises(FileNotFoundError) as exc_missing:
+        load_config(str(missing_path))
+    assert "missing" in str(exc_missing.value).lower()
+    assert str(missing_path.resolve()) in str(exc_missing.value)
+
+    # 2. Directory: must state that path is a directory and include absolute path
+    with pytest.raises(FileNotFoundError) as exc_dir:
+        load_config(str(tmp_path))
+    assert "directory" in str(exc_dir.value).lower()
+    assert str(tmp_path.resolve()) in str(exc_dir.value)
+
+
+def test_load_config_empty_value_falls_back_to_default_absolute_path():
+    """Verify that None, empty string, or whitespace-only config path falls back to the default absolute path."""
+    # Test None
+    cfg_none = load_config(None)
+    assert isinstance(cfg_none, dict)
+    assert "sites" in cfg_none
+
+    # Test empty string ""
+    cfg_empty = load_config("")
+    assert isinstance(cfg_empty, dict)
+    assert "sites" in cfg_empty
+
+    # Test whitespace string "   "
+    cfg_whitespace = load_config("   \t  ")
+    assert isinstance(cfg_whitespace, dict)
+    assert "sites" in cfg_whitespace
+
+
+def test_default_config_path_points_to_existing_file_from_different_working_dir(monkeypatch, tmp_path: Path):
+    """Verify DEFAULT_CONFIG_PATH points to an existing file even when current working directory changes."""
+    monkeypatch.chdir(tmp_path)
+    assert DEFAULT_CONFIG_PATH.is_absolute()
+    assert DEFAULT_CONFIG_PATH.is_file()
+
+    # Calling load_config() with no args from another working directory succeeds
+    cfg = load_config()
+    assert isinstance(cfg, dict)
+    assert "sites" in cfg
 
 
 def test_ci_guard_permits_explicit_db_path_in_tests(monkeypatch, tmp_path: Path):
@@ -300,7 +360,8 @@ def test_ci_check_fails_on_playwright_launch_error(monkeypatch):
 
 def test_workflow_yaml_structure_and_constraints():
     """Parse .github/workflows/monitor.yml and assert trigger, permissions, concurrency, and timeout constraints."""
-    workflow_path = Path(".github/workflows/monitor.yml")
+    repo_root = Path(__file__).resolve().parent.parent
+    workflow_path = repo_root / ".github" / "workflows" / "monitor.yml"
     assert workflow_path.exists(), ".github/workflows/monitor.yml must exist"
 
     content = workflow_path.read_text(encoding="utf-8")
@@ -352,7 +413,8 @@ def test_requirements_covers_all_third_party_imports():
     import ast
 
     # 1. Parse all import statements in monitor/
-    monitor_dir = Path("monitor")
+    repo_root = Path(__file__).resolve().parent.parent
+    monitor_dir = repo_root / "monitor"
     imported_modules = set()
     for py_file in monitor_dir.rglob("*.py"):
         tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
@@ -372,7 +434,7 @@ def test_requirements_covers_all_third_party_imports():
     third_party_imports = {m for m in imported_modules if m not in stdlib and m != "monitor"}
 
     # 3. Read packages listed in requirements.txt
-    req_file = Path("requirements.txt")
+    req_file = repo_root / "requirements.txt"
     assert req_file.exists(), "requirements.txt must exist"
     req_lines = req_file.read_text(encoding="utf-8").splitlines()
     declared_packages = set()
