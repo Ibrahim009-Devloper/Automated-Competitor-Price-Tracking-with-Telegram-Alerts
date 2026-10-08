@@ -10,10 +10,8 @@ import time
 from typing import Any, Dict, List, Optional
 import yaml
 
+from monitor.adapters import create_adapter as _create_adapter
 from monitor.adapters.base import SiteAdapter
-from monitor.adapters.shopify import ShopifyAdapter
-from monitor.adapters.jsonld import JsonLdAdapter
-from monitor.adapters.playwright import PlaywrightAdapter
 from monitor.detector import detect
 from monitor.models import FetchResult
 from monitor.notifier import (
@@ -103,28 +101,8 @@ def _get_active_target_urls_from_csv(
 
 
 def create_adapter(site_config: Dict[str, Any]) -> SiteAdapter:
-    """Factory to instantiate the appropriate SiteAdapter subclass.
-
-    Args:
-        site_config: Site settings dictionary containing 'adapter' key.
-
-    Returns:
-        SiteAdapter instance.
-
-    Raises:
-        ValueError: If the specified adapter type is not supported.
-    """
-    adapter_name = site_config.get("adapter", "").strip().lower()
-    if adapter_name == "shopify":
-        return ShopifyAdapter(site_config)
-    elif adapter_name == "jsonld":
-        return JsonLdAdapter(site_config)
-    elif adapter_name == "playwright":
-        return PlaywrightAdapter(site_config)
-    else:
-        raise ValueError(
-            f"Unsupported adapter '{adapter_name}' for site '{site_config.get('name')}'"
-        )
+    """Factory to instantiate the appropriate SiteAdapter subclass lazily."""
+    return _create_adapter(site_config)
 
 
 def run_once(
@@ -918,3 +896,18 @@ def check_single_url(
             print(f"  ❌ {err}")
 
     print("=" * 60 + "\n")
+
+
+def __getattr__(name: str) -> Any:
+    """Lazy module attribute resolver for backwards compatibility with tests and callers."""
+    if name == "ShopifyAdapter":
+        from monitor.adapters.shopify import ShopifyAdapter
+        return ShopifyAdapter
+    if name == "JsonLdAdapter":
+        from monitor.adapters.jsonld import JsonLdAdapter
+        return JsonLdAdapter
+    if name == "PlaywrightAdapter":
+        from monitor.adapters.playwright import PlaywrightAdapter
+        return PlaywrightAdapter
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+

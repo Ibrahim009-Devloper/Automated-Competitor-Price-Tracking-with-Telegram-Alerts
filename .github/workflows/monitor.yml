@@ -50,11 +50,16 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install dependencies
+      - name: Install runtime dependencies
         id: install-deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Verify dependency integrity
+        id: pip-check
+        run: |
+          python -m pip check
 
       - name: Determine Playwright version
         id: playwright-version
@@ -91,6 +96,13 @@ jobs:
         run: |
           python -m monitor.main --ci-check
 
+      - name: Run offline test suite (optional / manual dispatch)
+        id: run-tests
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          pip install -r requirements-dev.txt
+          pytest
+
       - name: Run price monitor
         id: run-monitor
         env:
@@ -113,8 +125,10 @@ jobs:
           STATUS_CHECK_DB: ${{ steps.check-db-secret.outcome }}
           STATUS_SETUP_PY: ${{ steps.setup-python.outcome }}
           STATUS_INSTALL_DEPS: ${{ steps.install-deps.outcome }}
+          STATUS_PIP_CHECK: ${{ steps.pip-check.outcome }}
           STATUS_INSTALL_PW: ${{ steps.install-playwright.outcome }}
           STATUS_CI_CHECK: ${{ steps.ci-check.outcome }}
+          STATUS_RUN_TESTS: ${{ steps.run-tests.outcome }}
           STATUS_RUN_MONITOR: ${{ steps.run-monitor.outcome }}
         run: |
           python -c "
@@ -128,9 +142,11 @@ jobs:
           steps_map = [
               ('STATUS_CHECK_DB', 'Fail fast if DATABASE_URL is missing'),
               ('STATUS_SETUP_PY', 'Set up Python'),
-              ('STATUS_INSTALL_DEPS', 'Install dependencies'),
+              ('STATUS_INSTALL_DEPS', 'Install runtime dependencies'),
+              ('STATUS_PIP_CHECK', 'Verify dependency integrity (pip check)'),
               ('STATUS_INSTALL_PW', 'Install Playwright and dependencies'),
               ('STATUS_CI_CHECK', 'Run CI pre-flight checks (--ci-check)'),
+              ('STATUS_RUN_TESTS', 'Run offline test suite'),
               ('STATUS_RUN_MONITOR', 'Run price monitor'),
           ]
 

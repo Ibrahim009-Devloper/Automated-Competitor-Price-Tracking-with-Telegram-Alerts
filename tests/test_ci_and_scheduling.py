@@ -340,7 +340,72 @@ def test_workflow_yaml_structure_and_constraints():
     assert any("actions/setup-python" in u for u in step_uses)
     assert any("DATABASE_URL is required in CI" in r for r in step_runs)
     assert any("requirements.txt" in r for r in step_runs)
+    assert any("pip check" in r for r in step_runs)
     assert any("playwright install" in r for r in step_runs)
     assert any("monitor.main --ci-check" in r for r in step_runs)
     assert any("monitor.main" in r for r in step_runs)
     assert any("actions/upload-artifact" in u for u in step_uses)
+
+
+def test_requirements_covers_all_third_party_imports():
+    """Verify that every third-party module imported under monitor/ is declared in requirements.txt."""
+    import ast
+
+    # 1. Parse all import statements in monitor/
+    monitor_dir = Path("monitor")
+    imported_modules = set()
+    for py_file in monitor_dir.rglob("*.py"):
+        tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    imported_modules.add(alias.name.split(".")[0])
+            elif isinstance(node, ast.ImportFrom):
+                if node.module:
+                    imported_modules.add(node.module.split(".")[0])
+
+    # 2. Exclude stdlib modules and internal modules
+    stdlib = sys.stdlib_module_names if hasattr(sys, "stdlib_module_names") else {
+        "os", "sys", "time", "datetime", "pathlib", "re", "csv", "json", "urllib", "typing",
+        "logging", "argparse", "sqlite3", "decimal", "random", "hashlib", "io", "copy", "traceback"
+    }
+    third_party_imports = {m for m in imported_modules if m not in stdlib and m != "monitor"}
+
+    # 3. Read packages listed in requirements.txt
+    req_file = Path("requirements.txt")
+    assert req_file.exists(), "requirements.txt must exist"
+    req_lines = req_file.read_text(encoding="utf-8").splitlines()
+    declared_packages = set()
+    for line in req_lines:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            pkg = line.split("==")[0].split(">=")[0].split("<=")[0].strip()
+            declared_packages.add(pkg.lower())
+
+    # 4. Map import name to canonical package name
+    import_to_package = {
+        "bs4": "beautifulsoup4",
+        "dotenv": "python-dotenv",
+        "pg8000": "pg8000",
+        "playwright": "playwright",
+        "psycopg": "psycopg[binary]",
+        "requests": "requests",
+        "yaml": "pyyaml",
+    }
+
+    # 5. Assert every third-party import is covered in requirements.txt
+    missing = []
+    for mod in third_party_imports:
+        pkg = import_to_package.get(mod, mod).lower()
+        if pkg not in declared_packages:
+            missing.append(f"{mod} (package: {pkg})")
+
+    assert not missing, f"Missing packages in requirements.txt for imports in monitor/: {missing}"
+
+
+def test_ci_check_fails_on_missing_python_module():
+    """Verify that run_ci_check fails and prints missing module if a required dependency is missing."""
+    with patch("importlib.import_module", side_effect=ImportError("No module named 'bs4'")):
+        ok = run_ci_check()
+        assert ok is False
+

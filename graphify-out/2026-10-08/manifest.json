@@ -6,9 +6,9 @@
     "semantic_hash": "1cea0feae00cbb70add41e85c024414b"
   },
   "monitor/adapters/__init__.py": {
-    "mtime": 1791357269.8450825,
-    "seen": 1791357744.5569627,
-    "ast_hash": "2356621f05a2f1861c897f4198b9e2cd",
+    "mtime": 1791444408.5153773,
+    "seen": 1791444710.7063842,
+    "ast_hash": "91ab97d389727aece15d4f0af55b6b02",
     "semantic_hash": ""
   },
   "monitor/adapters/base.py": {
@@ -30,9 +30,9 @@
     "semantic_hash": "c1035fd56958bb7e3717906928dc2eb3"
   },
   "monitor/main.py": {
-    "mtime": 1791438833.1390433,
-    "seen": 1791438908.9286444,
-    "ast_hash": "b067844df6d1b697863d836057d91464",
+    "mtime": 1791442452.888533,
+    "seen": 1791442719.7812386,
+    "ast_hash": "b3244358288479481b7f08fe3599cb02",
     "semantic_hash": ""
   },
   "monitor/models.py": {
@@ -48,15 +48,15 @@
     "semantic_hash": ""
   },
   "monitor/runner.py": {
-    "mtime": 1791440676.5145319,
-    "seen": 1791441323.8701184,
-    "ast_hash": "06fb4b6dce5ac2def2cf6528a22490c5",
+    "mtime": 1791444483.0743847,
+    "seen": 1791444710.706413,
+    "ast_hash": "9b8329d326b83a82b196fac1b84615ea",
     "semantic_hash": ""
   },
   "monitor/storage.py": {
-    "mtime": 1791441214.633587,
-    "seen": 1791441323.870121,
-    "ast_hash": "96b6891b10764755bbf53623bac77dd0",
+    "mtime": 1791442309.3339143,
+    "seen": 1791442719.7812552,
+    "ast_hash": "b6044cca4db6e9e479aff1999b6189c5",
     "semantic_hash": ""
   },
   "monitor/utils/__init__.py": {
@@ -72,10 +72,10 @@
     "semantic_hash": ""
   },
   "monitor/utils/logging_setup.py": {
-    "mtime": 1791346549.2695804,
-    "seen": 1791350875.9370317,
-    "ast_hash": "538c86b4ca4768f8d7aa8c4369c31d75",
-    "semantic_hash": "538c86b4ca4768f8d7aa8c4369c31d75"
+    "mtime": 1791442598.453161,
+    "seen": 1791442719.7812667,
+    "ast_hash": "94ba95f3404adbbc1fadfc2d03ede108",
+    "semantic_hash": ""
   },
   "monitor/utils/money.py": {
     "mtime": 1791356504.1627984,
@@ -132,9 +132,9 @@
     "semantic_hash": "fbf7fb7e8ed422e6d02e66ae446f68a2"
   },
   "README.md": {
-    "mtime": 1791436657.916221,
-    "seen": 1791436679.3454533,
-    "ast_hash": "6f242a9b88defb2e624d0ac395dadce5",
+    "mtime": 1791442702.8077092,
+    "seen": 1791442719.7813284,
+    "ast_hash": "aefd6e1657076e241fd9b8c64920f92d",
     "semantic_hash": ""
   },
   "config/sites.yaml": {
@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "requirements.txt": {
-    "mtime": 1791438182.5618002,
-    "seen": 1791438908.9287038,
-    "ast_hash": "59aa8d52a308922f517f27092232b670",
+    "mtime": 1791444642.8486674,
+    "seen": 1791444710.7064726,
+    "ast_hash": "32be204fbf2a56296642ea7ada1e9f11",
     "semantic_hash": ""
   },
   "monitor/adapters/jsonld.py": {
@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "monitor/adapters/playwright.py": {
-    "mtime": 1791432464.2058148,
-    "seen": 1791432511.9216704,
-    "ast_hash": "44aff4a1294d8be2d2d44e1f49b21a67",
+    "mtime": 1791442328.92474,
+    "seen": 1791442719.7812016,
+    "ast_hash": "bdc2dbfd6a40c75c9100439f719b3b24",
     "semantic_hash": ""
   },
   "tests/test_playwright_adapter.py": {
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "monitor/fallback.py": {
-    "mtime": 1791432285.652858,
-    "seen": 1791432511.921678,
-    "ast_hash": "7d0b7a053ff40ea9b06fe5f9c96206fd",
+    "mtime": 1791444454.7254956,
+    "seen": 1791444710.7064047,
+    "ast_hash": "cbd55f6b7cc27d9332b85b9830d11277",
     "semantic_hash": ""
   },
   "tests/test_fallback_strategy.py": {
@@ -231,6 +231,30 @@
     "mtime": 1791436348.3754556,
     "seen": 1791436679.345451,
     "ast_hash": "50be25687d8bb928713548d4409dfecb",
+    "semantic_hash": ""
+  },
+  "monitor/ci_check.py": {
+    "mtime": 1791444507.9002912,
+    "seen": 1791444710.7064,
+    "ast_hash": "e897c41ffcff8b4e9d296e5d9b624f34",
+    "semantic_hash": ""
+  },
+  "tests/test_ci_and_scheduling.py": {
+    "mtime": 1791444587.3594267,
+    "seen": 1791444710.7064347,
+    "ast_hash": "247aef5c57c51b5ede46b29364f56011",
+    "semantic_hash": ""
+  },
+  ".github/workflows/monitor.yml": {
+    "mtime": 1791444543.1267395,
+    "seen": 1791444710.706464,
+    "ast_hash": "1cdc24cd0386af57a650d71e02097bc7",
+    "semantic_hash": ""
+  },
+  "requirements-dev.txt": {
+    "mtime": 1791444390.4257624,
+    "seen": 1791444710.7064698,
+    "ast_hash": "734583b99d685a83e9cbdcb3e13a276a",
     "semantic_hash": ""
   }
 }

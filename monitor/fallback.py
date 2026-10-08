@@ -16,8 +16,6 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
-from monitor.adapters.jsonld import JsonLdAdapter
-from monitor.adapters.playwright import PlaywrightAdapter
 from monitor.models import FetchResult, Observation
 from monitor.utils.http import HttpError, http_get, parse_json_safely
 
@@ -308,6 +306,7 @@ def fetch_with_fallback(
 
         if html_text:
             try:
+                from monitor.adapters.jsonld import JsonLdAdapter
                 jsonld_adapter = JsonLdAdapter(site_config)
                 jsonld_obs = jsonld_adapter.parse_html(
                     html_text=html_text,
@@ -337,6 +336,7 @@ def fetch_with_fallback(
         logger.info("[%s] Falling back to HTML/Playwright for %s", site_name, target_url)
         attempted_strategies.append("HTML/DOM static")
 
+        from monitor.adapters.playwright import PlaywrightAdapter
         pw_adapter = PlaywrightAdapter(site_config)
         if html_text:
             try:
